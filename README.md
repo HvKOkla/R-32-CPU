@@ -1,23 +1,14 @@
 
-```html
-<div align="center">
-  <img src="docs/R32.svg" alt="R-32 CPU Logo" width="250"/>
-  
-  <h1>R-32 CPU</h1>
-  
-  <p><b>An open-source, pedagogical 8-bit CPU with its own ISA, VM, and assembler.</b></p>
-  
-  <p>
-    <img src="https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-    <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License">
-    <img src="https://img.shields.io/badge/Architecture-8--bit-orange?style=for-the-badge" alt="8-bit">
-    <img src="https://img.shields.io/badge/FPGA-In_Progress-yellow?style=for-the-badge" alt="FPGA">
-  </p>
-</div>
+```markdown
+# R-32 CPU
+
+**An open-source 8-bit CPU with its own ISA, VM, and assembler.**
+
+![R-32 CPU Logo](docs/R32.png)
 
 ---
 
-## 📖 Overview
+## Overview
 
 The **R-32** is a complete 8-bit computer architecture designed from scratch. It includes a frozen Instruction Set Architecture (ISA), a Python-based Virtual Machine (VM), and a two-pass assembler with label resolution.
 
@@ -32,8 +23,6 @@ The goal of this project is to understand computer architecture from the ground 
 - **Flags**: Zero (Z), Negative (N), Carry (C), and Overflow (V).
 
 ## 🧠 Register File
-
-The R-32 features 16 general-purpose 8-bit registers. Some have specific roles defined by the ABI (Application Binary Interface) for future software conventions.
 
 | Register | Alias | Purpose | Notes |
 | :---: | :---: | :--- | :--- |
@@ -84,13 +73,13 @@ For jump instructions, the address is encoded on 16 bits across the `rs` and `im
 
 | Path | Description |
 |------|-------------|
-| `isa.py` | The frozen Instruction Set Architecture (opcodes, registers, format). |
+| `isa.py` | The frozen Instruction Set Architecture. |
 | `src/vm.py` | The Virtual Machine (executes bytecode). |
-| `src/assembler.py` | Two-pass assembler (handles labels, comments, and constants). |
+| `src/assembler.py` | Two-pass assembler (handles labels, comments). |
 | `src/memory.py` | Memory manager with bounds checking. |
 | `src/main.py` | The full pipeline (assemble `.r32` → execute). |
 | `examples/` | A collection of `.r32` assembly programs. |
-| `docs/` | Design choices, architecture diagrams, and logo. |
+| `docs/` | Design choices and logo. |
 
 ## 🚀 Getting Started
 
@@ -126,21 +115,12 @@ The `examples/` folder contains several programs written in R-32 assembly to tes
 
 - [x] Design the ISA (v1.0).
 - [x] Implement the Python VM and Assembler.
-- [x] Write example programs (Fibonacci, Sort, Sieve, Game).
+- [x] Write example programs.
 - [ ] Port the CPU to **Amaranth HDL** (Python).
 - [ ] Synthesize and deploy on **Tang Nano 9K FPGA**.
-- [ ] Add VGA and PS/2 peripherals.
-- [ ] Port Snake to R-32 assembly.
 
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-<div align="center">
-  <i>Built with passion to understand how computers really work.</i>
-</div>
 ```
-
-
 
