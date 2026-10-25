@@ -4,7 +4,7 @@ from assembler import R32Assembler
 from vm import R32VM
 
 
-nom_test = "guess"
+nom_test = "bubble_sort"
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent

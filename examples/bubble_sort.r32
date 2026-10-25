@@ -1,0 +1,80 @@
+; =========================================================
+; BUBBLE SORT (Tri à bulles)
+; Trie 4 valeurs en mémoire et les affiche.
+; =========================================================
+
+    ; --- INITIALISATION DU TABLEAU EN MÉMOIRE ---
+    ; On utilise les adresses 100, 101, 102, 103
+    MOV R1, 5
+    STORE R1, 100   ; mem[100] = 5
+    MOV R1, 1
+    STORE R1, 101   ; mem[101] = 1
+    MOV R1, 4
+    STORE R1, 102   ; mem[102] = 4
+    MOV R1, 2
+    STORE R1, 103   ; mem[103] = 2
+
+    ; --- BOUCLE EXTERNE (Nombre de passes) ---
+    ; Pour 4 éléments, on fait 3 passes maximum.
+    MOV R5, 3       ; R5 = compteur de passes
+
+outer_loop:
+    MOV R6, 100     ; R6 = adresse de base du tableau
+    MOV R7, 3       ; R7 = nombre de comparaisons par passe
+
+inner_loop:
+    ; --- COMPARAISON ---
+    LOAD R1, 0      ; (Problème : on ne peut pas faire LOAD R1, [R6] directement)
+    ; Astuce : on va coder en dur les adresses pour ce test simple.
+    ; On va comparer mem[100] et mem[101], puis mem[101] et mem[102], etc.
+    
+    ; Pour faire simple, on va "dérouler" la boucle interne.
+    JMP pass_1
+
+pass_1:
+    LOAD R1, 100    ; R1 = mem[100]
+    LOAD R2, 101    ; R2 = mem[101]
+    CMP R1, R2
+    JN  no_swap_1   ; Si R1 < R2, pas besoin d'échanger (flag N=1)
+    
+    ; Échange
+    STORE R2, 100
+    STORE R1, 101
+no_swap_1:
+
+pass_2:
+    LOAD R1, 101
+    LOAD R2, 102
+    CMP R1, R2
+    JN  no_swap_2
+    
+    STORE R2, 101
+    STORE R1, 102
+no_swap_2:
+
+pass_3:
+    LOAD R1, 102
+    LOAD R2, 103
+    CMP R1, R2
+    JN  no_swap_3
+    
+    STORE R2, 102
+    STORE R1, 103
+no_swap_3:
+
+    ; --- FIN DE LA PASSE ---
+    DEC R5
+    CMP R5, R0
+    JNZ outer_loop
+
+    ; --- AFFICHAGE DU RÉSULTAT ---
+    LOAD R1, 100
+    PRINT R1
+    LOAD R1, 101
+    PRINT R1
+    LOAD R1, 102
+    PRINT R1
+    LOAD R1, 103
+    PRINT R1
+
+    HALT
