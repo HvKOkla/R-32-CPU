@@ -1,11 +1,9 @@
+<div align="center">
+  <img src="docs/R32.svg" alt="R-32 CPU Logo" width="250">
+</div>
 
-```markdown
 # R-32 CPU
-
-An open-source, pedagogical 8-bit CPU with its own ISA, VM, and assembler.
-
-![R-32 CPU Logo](docs/R32.svg)
-
+An open-source 8-bit CPU with its own ISA, VM, and assembler.
 ## Overview
 
 The R-32 is a complete 8-bit computer architecture designed from scratch. It includes a frozen Instruction Set Architecture (ISA), a Python-based Virtual Machine (VM), and a two-pass assembler with label resolution.
