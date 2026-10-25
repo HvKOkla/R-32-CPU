@@ -1,28 +1,16 @@
-Voici ton fichier **`README.md` complet, mis à jour avec le logo, les badges, les tableaux des registres et des opcodes, et la roadmap**. 
-
-Tu n'as plus qu'à copier-coller ce bloc **entier** dans ton fichier `README.md` sur ton PC, sauvegarder, et faire ton `git commit`.
-
-***
 
 ```markdown
-<p align="center">
-  <img src="docs/R32.svg" alt="R-32 CPU Logo" width="250"/>
-</p>
+![R-32 CPU Logo](docs/R32.svg)
 
-<h1 align="center">R-32 CPU</h1>
+# R-32 CPU
 
-<p align="center">
-  <b>An open-source 8-bit CPU with its own ISA, VM, and assembler.</b>
-</p>
+**An open-source, pedagogical 8-bit CPU with its own ISA, VM, and assembler.**
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License">
-  <img src="https://img.shields.io/badge/Architecture-8--bit-orange?style=for-the-badge" alt="8-bit">
-  <img src="https://img.shields.io/badge/FPGA-In_Progress-yellow?style=for-the-badge" alt="FPGA">
-</p>
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+![Architecture](https://img.shields.io/badge/Architecture-8--bit-orange?style=for-the-badge)
+![FPGA](https://img.shields.io/badge/FPGA-In_Progress-yellow?style=for-the-badge)
 
----
 
 ## Overview
 
@@ -55,7 +43,7 @@ The R-32 features 16 general-purpose 8-bit registers. Some have specific roles d
 | **R14** | `LR` | Link Register | Holds the return address during `CALL`. |
 | **R15** | `GP` | Global Pointer | Reserved for global data access (future). |
 
-## Instruction Set (ISA v1.0)
+## ⚙️ Instruction Set (ISA v1.0)
 
 The CPU uses a fixed 4-byte instruction format: `[opcode (8 bits)][rd (4 bits)][rs (4 bits)][imm8 (8 bits)]`. 
 For jump instructions, the address is encoded on 16 bits across the `rs` and `imm` fields (Little-Endian).
@@ -87,7 +75,7 @@ For jump instructions, the address is encoded on 16 bits across the `rs` and `im
 | `0x16` | **INC** | `Rd` | `Rd = Rd + 1` | Z, N |
 | `0x17` | **DEC** | `Rd` | `Rd = Rd - 1` | Z, N |
 
-## Project Structure
+## 📂 Project Structure
 
 | Path | Description |
 |------|-------------|
@@ -119,7 +107,7 @@ For jump instructions, the address is encoded on 16 bits across the `rs` and `im
    python src/main.py
    ```
 
-## Example Programs
+## 🎮 Example Programs
 
 The `examples/` folder contains several programs written in R-32 assembly to test the CPU:
 
@@ -142,4 +130,3 @@ The `examples/` folder contains several programs written in R-32 assembly to tes
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
