@@ -1,0 +1,56 @@
+; =========================================================
+; R-32 GLOBAL TEST SUITE
+; =========================================================
+
+    ; --- TEST 1 : MOV et ADD ---
+    MOV R1, 10      ; R1 = 10
+    MOV R2, 32      ; R2 = 32
+    ADD R1, R2      ; R1 = 42
+    PRINT R1        ; Devrait afficher : R1 = 42
+
+    ; --- TEST 2 : SUB et Flag Zero (Z) ---
+    MOV R3, 5
+    SUB R1, R3      ; R1 = 42 - 5 = 37
+    CMP R1, R1      ; Compare 37 avec 37 (met le flag Z à 1)
+    JZ  test_jump_ok; Si Z=1, on saute 
+    
+    MOV R4, 99      ; Code d'erreur
+    PRINT R4
+    HALT
+
+test_jump_ok:
+    ; --- TEST 3 : JMP inconditionnel ---
+    JMP test_stack
+
+    MOV R4, 98      ; Code d'erreur
+    PRINT R4
+    HALT
+
+test_stack:
+    ; --- TEST 4 : CALL, RET et la Pile (PUSH/POP) ---
+    MOV R5, 100
+    CALL my_function
+    
+    ; --- TEST 5 : Vérification finale ---
+    CMP R5, R5
+    JZ  success
+    
+    MOV R4, 97      ; Code d'erreur
+    PRINT R4
+    HALT
+
+success:
+    ; --- TEST 6 : Résultat final ---
+    MOV R4, 0
+    ADD R4, R1      ; R4 = 0 + 37 = 37
+    MOV R3, 5
+    ADD R4, R3      ; R4 = 37 + 5 = 42
+    PRINT R4        ; Devrait afficher : R4 = 42
+    HALT
+
+my_function:
+    PUSH R5         ; Sauvegarde R5 (100)
+    MOV R5, 50      ; Modifie R5
+    POP R5          ; Restaure R5 (100)
+    MOV R5, 42      ; R5 = 42
+    RET

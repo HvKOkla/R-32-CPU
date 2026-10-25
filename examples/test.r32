@@ -1,0 +1,13 @@
+
+MOV R0, 100
+MOV R1, 35
+MOV R2, 15
+ADD R0, R1      
+SUB R0, R2      
+PRINT R0        
+MOV R4, 42
+MOV R5, 42
+CMP R4, R5      
+
+PRINT R1        
+HALT            
