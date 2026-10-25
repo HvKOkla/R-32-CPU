@@ -4,7 +4,7 @@ from assembler import R32Assembler
 from vm import R32VM
 
 
-nom_test = "test_all"
+nom_test = "fibonacci"
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent

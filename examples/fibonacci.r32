@@ -1,0 +1,38 @@
+; =========================================================
+; FIBONACCI SEQUENCE
+; Affiche les N premiers termes de la suite de Fibonacci
+; =========================================================
+
+    ; --- INITIALISATION ---
+    MOV R1, 0       ; R1 = F(0) = 0
+    MOV R2, 1       ; R2 = F(1) = 1
+    MOV R3, 10      ; R3 = Compteur (on veut 10 termes)
+    MOV R4, 1       ; R4 = Constante 1 (pour le DEC)
+
+loop:
+    ; --- AFFICHAGE ---
+    PRINT R1        ; Affiche le terme courant
+
+    ; --- CALCUL DU TERME SUIVANT ---
+    ; R5 = R1 + R2
+    MOV R5, 0
+    ADD R5, R1
+    ADD R5, R2
+
+    
+    ; --- DÉCALAGE DES VALEURS ---
+    ; R1 devient R2, et R2 devient R5
+    MOV R1, 0       ; On remet R1 à 0
+    ADD R1, R2      ; R1 = 0 + R2 (donc R1 = R2)
+    
+    MOV R2, 0       ; On remet R2 à 0
+    ADD R2, R5      ; R2 = 0 + R5 (donc R2 = R5)
+    ; --- GESTION DE LA BOUCLE ---
+    SUB R3, R4      ; Décrémente le compteur (R3 = R3 - 1)
+    
+    ; Si le compteur n'est pas à zéro, on boucle
+    CMP R3, R0      ; Compare R3 avec R0 (qui vaut toujours 0)
+    JNZ loop        ; JNZ = Jump if Not Zero (saute si Z=0)
+
+    ; --- FIN DU PROGRAMME ---
+    HALT
