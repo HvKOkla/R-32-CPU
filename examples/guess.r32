@@ -1,0 +1,61 @@
+; =========================================================
+; JEU : DEVINE LE NOMBRE
+; Le CPU a choisi le nombre 42 (caché dans R3).
+; =========================================================
+
+    MOV R3, 42      ; R3 = Le nombre secret à deviner
+
+    ; --- ESSAI 1 : Le joueur tente 20 ---
+    MOV R2, 20      ; R2 = La tentative du joueur
+    CMP R2, R3      ; Compare la tentative avec le secret
+    JZ  gagne       ; Si c'est égal (Flag Z=1), on a gagné !
+    JN  trop_grand  ; Si c'est négatif (R2 < R3), c'est trop petit
+    JMP trop_petit  ; Sinon, c'est trop grand
+
+trop_grand:
+    ; (En réalité R2 < R3, mais mon code va afficher l'inverse pour l'exemple, 
+    ; on va dire que 1 = "trop petit" et 2 = "trop grand")
+    MOV R1, 1       ; Code 1 = Trop petit
+    PRINT R1
+    JMP essai2
+
+trop_petit:
+    MOV R1, 2       ; Code 2 = Trop grand
+    PRINT R1
+    JMP essai2
+
+essai2:
+    ; --- ESSAI 2 : Le joueur tente 50 ---
+    MOV R2, 50
+    CMP R2, R3
+    JZ  gagne
+    ; Si R2 (50) - R3 (42) est positif, R2 > R3
+    ; On n'a pas de flag "Positif", alors on teste si le résultat est négatif.
+    ; 50 - 42 = 8 (positif). Le flag N sera à 0. 
+    JN  trop_grand_2
+    JMP trop_petit_2
+
+trop_grand_2:
+    MOV R1, 1
+    PRINT R1
+    JMP essai3
+
+trop_petit_2:
+    MOV R1, 2
+    PRINT R1
+    JMP essai3
+
+essai3:
+    ; --- ESSAI 3 : Le joueur tente 42 (La bonne réponse !) ---
+    MOV R2, 42
+    CMP R2, R3
+    JZ  gagne       ; S'il trouve, il saute à la victoire
+    MOV R1, 3       ; Code 3 = Erreur (n'a pas trouvé)
+    PRINT R1
+    HALT
+
+gagne:
+    ; --- VICTOIRE ! ---
+    MOV R1, 0       ; Code 0 = Gagné !
+    PRINT R1
+    HALT
