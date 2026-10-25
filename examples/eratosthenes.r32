@@ -1,0 +1,69 @@
+; =========================================================
+; CRIBLE D'ÉRATOSTHÈNE (Test ultime sans labels d'affichage)
+; =========================================================
+
+    ; --- INITIALISATION (Tout à 0) ---
+    MOV R1, 0
+    STORE R1, 100
+    STORE R1, 101
+    STORE R1, 102
+    STORE R1, 103
+    STORE R1, 104
+    STORE R1, 105
+    STORE R1, 106
+    STORE R1, 107
+    STORE R1, 108
+    STORE R1, 109
+
+    ; 0 et 1 ne sont pas premiers (on les barre = 1)
+    MOV R1, 1
+    STORE R1, 100
+    STORE R1, 101
+
+    ; --- CRIBLAGE PAR 2 (On barre 4, 6, 8) ---
+    STORE R1, 104
+    STORE R1, 106
+    STORE R1, 108
+
+    ; --- CRIBLAGE PAR 3 (On barre 6, 9) ---
+    STORE R1, 106
+    STORE R1, 109
+
+    ; --- CRIBLAGE PAR 5 (On barre 10 - pas dans notre tableau) ---
+
+    ; =========================================================
+    ; AFFICHAGE DIRECT EN MÉMOIRE
+    ; On affiche le contenu brut (0 = Premier, 1 = Barré)
+    ; =========================================================
+    
+    LOAD R1, 100
+    PRINT R1    ; mem[100] = 1 (0 barré)
+    
+    LOAD R1, 101
+    PRINT R1    ; mem[101] = 1 (1 barré)
+    
+    LOAD R1, 102
+    PRINT R1    ; mem[102] = 0 (2 premier)
+    
+    LOAD R1, 103
+    PRINT R1    ; mem[103] = 0 (3 premier)
+    
+    LOAD R1, 104
+    PRINT R1    ; mem[104] = 1 (4 barré)
+    
+    LOAD R1, 105
+    PRINT R1    ; mem[105] = 0 (5 premier)
+    
+    LOAD R1, 106
+    PRINT R1    ; mem[106] = 1 (6 barré)
+    
+    LOAD R1, 107
+    PRINT R1    ; mem[107] = 0 (7 premier)
+    
+    LOAD R1, 108
+    PRINT R1    ; mem[108] = 1 (8 barré)
+    
+    LOAD R1, 109
+    PRINT R1    ; mem[109] = 1 (9 barré)
+
+    HALT

@@ -5,8 +5,8 @@ from isa import (
 
 class R32Assembler:
     """
-    Assembleur 2 passes — syntaxe FIGÉE (voir isa.py).
-    Passe 1 : Collecte des labels (adresses).
+    Assembleur 2 passes robuste.
+    Passe 1 : Collecte des labels.
     Passe 2 : Génération du bytecode avec validation stricte.
     """
 
@@ -16,10 +16,11 @@ class R32Assembler:
 
     @staticmethod
     def _clean(line):
+        # Enlève les commentaires et les espaces inutiles
         return line.split(COMMENT_CHAR, 1)[0].strip()
 
     def _resolve_reg(self, tok, line_no):
-        tok = tok.strip().upper()
+        tok = tok.strip().upper().replace(",", "")
         if tok in REG_NAMES:
             return REG_NAMES[tok]
         if tok.startswith("R"):
@@ -33,11 +34,12 @@ class R32Assembler:
         raise ValueError(f"Ligne {line_no} : registre attendu, reçu {tok!r}")
 
     def _parse_number(self, tok, line_no, max_value):
-        tok = tok.strip()
+        tok = tok.strip().replace(",", "")
         if tok in self.constants:
             val = self.constants[tok]
         else:
             try:
+                # Gère le décimal (42) et l'hexadécimal (0x2A)
                 val = int(tok, 16) if tok.lower().startswith("0x") else int(tok)
             except ValueError:
                 raise ValueError(f"Ligne {line_no} : valeur invalide {tok!r}")
@@ -47,7 +49,7 @@ class R32Assembler:
         return val
 
     def _parse_addr(self, tok, line_no, labels):
-        tok = tok.strip()
+        tok = tok.strip().replace(",", "")
         if labels is not None and tok in labels:
             return labels[tok]
         return self._parse_number(tok, line_no, 0xFFFF)
@@ -61,7 +63,6 @@ class R32Assembler:
             if not line:
                 continue
 
-            # Gestion des labels sur une ligne seule : "loop:"
             if line.endswith(":"):
                 name = line[:-1].strip()
                 if not name:
@@ -71,10 +72,9 @@ class R32Assembler:
                 labels[name] = pc
                 continue
 
-            parts = line.replace(",", " ").split()
+            parts = line.split()
             head = parts[0].lower()
 
-            # On ignore les directives pour le calcul du PC
             if head in (".equ", ".org", ".align", ".byte", ".word"):
                 if head == ".org":
                     pc = self._parse_number(parts[1], line_no, 0xFFFF)
@@ -87,13 +87,13 @@ class R32Assembler:
                     pc += size * (len(parts) - 1)
                 continue
 
-            # C'est une instruction, on avance de 4 octets
             pc += INSTR_SIZE
 
         return labels
 
     # ---------- Passe 2 : génération ----------
     def _emit(self, line, line_no, labels):
+        # Remplace les virgules par des espaces pour faciliter le split
         parts = line.replace(",", " ").split()
         head = parts[0].upper()
         
@@ -129,7 +129,6 @@ class R32Assembler:
         elif head in ("JZ", "JNZ", "JN", "JMP", "CALL"):
             if len(args) != 1: raise ValueError(f"Ligne {line_no} : {head} adresse|label")
             addr = self._parse_addr(args[0], line_no, labels)
-            # On encode l'adresse sur 16 bits (little-endian) dans rs et imm
             rs = addr & 0xFF
             imm = (addr >> 8) & 0xFF
 
@@ -138,14 +137,13 @@ class R32Assembler:
             rd = self._resolve_reg(args[0], line_no)
             imm = self._parse_number(args[1], line_no, 0xFF)
 
-        
         return [op, rd, rs, imm]
 
     def assemble_lines(self, lines):
-        # Passe 1
+        # Passe 1 : Labels
         self.labels = self._collect_labels(lines)
         
-        
+        # Passe 1.5 : Constantes
         self.constants = {}
         for line_no, raw in enumerate(lines, 1):
             line = self._clean(raw)
@@ -157,10 +155,9 @@ class R32Assembler:
                 val = self._parse_number(parts[2], line_no, 0xFFFF)
                 self.constants[name] = val
 
-        # Passe 2 : génération
-        bytecode = []
-        pc = 0
+        # Passe 2 : Génération
         buffer = {}
+        pc = 0
 
         for line_no, raw in enumerate(lines, 1):
             line = self._clean(raw)
@@ -191,7 +188,6 @@ class R32Assembler:
                         buffer[pc + 1] = (val >> 8) & 0xFF
                         pc += 2
             else:
-                
                 instr = self._emit(line, line_no, self.labels)
                 for i, b in enumerate(instr):
                     buffer[pc + i] = b
@@ -200,7 +196,6 @@ class R32Assembler:
         if not buffer:
             return []
 
-      
         max_addr = max(buffer)
         out = bytearray(max_addr + 1)
         for addr, b in buffer.items():
