@@ -1,0 +1,24 @@
+
+    ; 1. Demander un caractère à l'utilisateur
+    PRINT_CHAR R0      ; (Optionnel, on ne peut pas afficher de texte facilement sans boucle)
+    
+    ; 2. Lire le caractère
+    READ R1            ; R1 = caractère tapé (code ASCII)
+    
+    ; 3. Stocker le caractère en mémoire à l'adresse 0x50
+    MOV R2, 0x50       ; R2 = 0x50 (adresse mémoire)
+    STORE_IND R1, R2   ; mem[0x50] = R1
+    
+    ; 4. Relire le caractère via un pointeur
+    MOV R3, 0          ; R3 = 0 (pour effacer)
+    LOAD_IND R3, R2    ; R3 = mem[0x50] (R3 = code ASCII)
+    
+    ; 5. Vérifier que c'est bien le même caractère (CMPI)
+    CMPI R3, 0         ; Compare avec 0 (si c'est 0, c'est vide)
+    JZ fin             ; Si égal à 0, on saute à la fin
+    
+    ; 6. Afficher le caractère relu
+    PRINT_CHAR R3
+    
+fin:
+    HALT
