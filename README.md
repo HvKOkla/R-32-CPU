@@ -100,7 +100,15 @@ python src/main.py
 - [x] Write example programs.
 - [ ] Port the CPU to Amaranth HDL (Python).
 - [ ] Synthesize on Tang Nano 9K FPGA.
+## Roadmap v1.1 (Next)
+- [ ] Add `LOAD_IND` / `STORE_IND` (Pointer support for strings/arrays).
+- [ ] Add `READ` (Keyboard input).
+- [ ] Add `CMPI` (Compare immediate).
+- [ ] Build a "Hello World" shell (reads a command, prints a response).
 
+## Roadmap v1.2 (Future)
+- [ ] Add `INT` (Software interrupts / syscalls).
+- [ ] Implement kernel/user modes.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
