@@ -1,11 +1,11 @@
 """
-ISA R-32 v1.0 — FIGÉE.
+ISA R-32 v1.1 — FIGÉE.
 
-Toute évolution doit incrémenter la version (v1.1, v2.0...)
+Toute évolution doit incrémenter la version (v1.2, v2.0...)
 et documenter la compatibilité dans un CHANGELOG.
 """
 
-ISA_VERSION = "1.0"
+ISA_VERSION = "1.1"
 NUM_REGISTERS = 16
 
 
@@ -60,6 +60,14 @@ OP_INC   = 0x16   # NEW
 OP_DEC   = 0x17   # NEW
 
 
+OP_READ       = 0x18   # Rd = clavier (1 caractère ASCII)
+OP_PRINT_CHAR = 0x19   # Affiche le caractère ASCII contenu dans Rd
+OP_LOAD_IND   = 0x1A   # Rd = mem[Rs] (Load indirect)
+OP_STORE_IND  = 0x1B   # mem[Rs] = Rd (Store indirect)
+OP_CMPI       = 0x1C   # Compare Rd avec une valeur immédiate (imm8)
+# -----------------------------
+
+
 OPCODES = {
     "HALT":  OP_HALT,  "PRINT": OP_PRINT, "MOV":   OP_MOV,
     "ADD":   OP_ADD,   "SUB":   OP_SUB,   "CMP":   OP_CMP,
@@ -69,12 +77,20 @@ OPCODES = {
     "SHR":   OP_SHR,   "JNZ":   OP_JNZ,   "JN":    OP_JN,
     "PUSH":  OP_PUSH,  "POP":   OP_POP,   "CALL":  OP_CALL,
     "RET":   OP_RET,   "INC":   OP_INC,   "DEC":   OP_DEC,
+    
+    
+    "READ":       OP_READ,
+    "PRINT_CHAR": OP_PRINT_CHAR,
+    "LOAD_IND":   OP_LOAD_IND,
+    "STORE_IND":  OP_STORE_IND,
+    "CMPI":       OP_CMPI,
+    
 }
 
 INSTR_SIZE = 4
 FLAG_Z = "Z"  # zero
 FLAG_N = "N"  # negative
-FLAG_C = "C"  # carry    (réservé, pas encore calculé)
+FLAG_C = "C"  
 FLAG_V = "V"  
 
 FLAG_NAMES = (FLAG_Z, FLAG_N, FLAG_C, FLAG_V)
@@ -82,4 +98,4 @@ FLAG_NAMES = (FLAG_Z, FLAG_N, FLAG_C, FLAG_V)
 
 DIRECTIVES = (".org", ".byte", ".word", ".equ", ".align")
 
-COMMENT_CHAR = ";"   
+COMMENT_CHAR = ";"
