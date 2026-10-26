@@ -108,8 +108,8 @@ class R32Assembler:
             if args:
                 raise ValueError(f"Ligne {line_no} : {head} ne prend aucun argument")
 
-        elif head == "PRINT":
-            if len(args) != 1: raise ValueError(f"Ligne {line_no} : PRINT R_x")
+        elif head in ("PRINT", "READ", "PRINT_CHAR"):
+            if len(args) != 1: raise ValueError(f"Ligne {line_no} : {head} R_x")
             rd = self._resolve_reg(args[0], line_no)
 
         elif head in ("INC", "DEC", "PUSH", "POP"):
@@ -121,10 +121,15 @@ class R32Assembler:
             rd = self._resolve_reg(args[0], line_no)
             imm = self._parse_number(args[1], line_no, 0xFF)
 
-        elif head in ("ADD", "SUB", "CMP", "AND", "OR", "XOR", "SHL", "SHR"):
+        elif head in ("ADD", "SUB", "CMP", "AND", "OR", "XOR", "SHL", "SHR", "LOAD_IND", "STORE_IND"):
             if len(args) != 2: raise ValueError(f"Ligne {line_no} : {head} R_x, R_y")
             rd = self._resolve_reg(args[0], line_no)
             rs = self._resolve_reg(args[1], line_no)
+
+        elif head == "CMPI":
+            if len(args) != 2: raise ValueError(f"Ligne {line_no} : CMPI R_x, imm8")
+            rd = self._resolve_reg(args[0], line_no)
+            imm = self._parse_number(args[1], line_no, 0xFF)
 
         elif head in ("JZ", "JNZ", "JN", "JMP", "CALL"):
             if len(args) != 1: raise ValueError(f"Ligne {line_no} : {head} adresse|label")
