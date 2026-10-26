@@ -1,14 +1,19 @@
 """
-ISA R-32 v1.0 — FIGÉE.
+ISA R-32 v1.2 — FIGÉE.
 
-Toute évolution doit incrémenter la version (v1.1, v2.0...)
+Toute évolution doit incrémenter la version (v1.3, v2.0...)
 et documenter la compatibilité dans un CHANGELOG.
+
+NOUVEAUTÉ v1.2 :
+- Ajout de MOVL (Move Immediate Long) pour charger des adresses 16 bits (0x0000 à 0xFFFF) dans un registre.
+  Format : [opcode][rd][0][imm8] pour la partie haute, ou plus simple : on utilise une seule instruction
+  qui lit imm16 dans les 2 octets suivants. Ici, on va ruser : MOVL Rd, imm16.
 """
 
-ISA_VERSION = "1.0"
+ISA_VERSION = "1.2"
 NUM_REGISTERS = 16
 
-
+# --- DÉFINITION DES REGISTRES ---
 REG_ZERO = 0   
 REG_RA   = 1    
 REG_A0   = 2    # R2  : argument 2
@@ -33,7 +38,7 @@ REG_NAMES = {
     "FP": REG_FP, "SP": REG_SP, "LR": REG_LR, "GP": REG_GP,
 }
 
-
+# --- OPCODES ---
 OP_HALT  = 0x00
 OP_PRINT = 0x01
 OP_MOV   = 0x02
@@ -44,21 +49,31 @@ OP_JZ    = 0x06
 OP_JMP   = 0x07
 OP_LOAD  = 0x08
 OP_STORE = 0x09
-OP_NOP   = 0x0A   # NEW : no-op (padding, alignement)
-OP_AND   = 0x0B   # NEW
-OP_OR    = 0x0C   # NEW
-OP_XOR   = 0x0D   # NEW
-OP_SHL   = 0x0E   # NEW
-OP_SHR   = 0x0F   # NEW
-OP_JNZ   = 0x10   # NEW : saut si Z=0
-OP_JN    = 0x11   # NEW : saut si N=1 (négatif)
-OP_PUSH  = 0x12   # NEW
-OP_POP   = 0x13   # NEW
-OP_CALL  = 0x14   # NEW
-OP_RET   = 0x15   # NEW
-OP_INC   = 0x16   # NEW
-OP_DEC   = 0x17   # NEW
+OP_NOP   = 0x0A
+OP_AND   = 0x0B
+OP_OR    = 0x0C
+OP_XOR   = 0x0D
+OP_SHL   = 0x0E
+OP_SHR   = 0x0F
+OP_JNZ   = 0x10
+OP_JN    = 0x11
+OP_PUSH  = 0x12
+OP_POP   = 0x13
+OP_CALL  = 0x14
+OP_RET   = 0x15
+OP_INC   = 0x16
+OP_DEC   = 0x17
 
+# --- NOUVEAUX OPCODES v1.1 ---
+OP_READ       = 0x18
+OP_PRINT_CHAR = 0x19
+OP_LOAD_IND   = 0x1A
+OP_STORE_IND  = 0x1B
+OP_CMPI       = 0x1C
+
+# --- NOUVEAUX OPCODES v1.2 ---
+OP_MOVL       = 0x1D   # Charge une valeur immédiate 16 bits dans Rd
+# -----------------------------
 
 OPCODES = {
     "HALT":  OP_HALT,  "PRINT": OP_PRINT, "MOV":   OP_MOV,
@@ -69,17 +84,26 @@ OPCODES = {
     "SHR":   OP_SHR,   "JNZ":   OP_JNZ,   "JN":    OP_JN,
     "PUSH":  OP_PUSH,  "POP":   OP_POP,   "CALL":  OP_CALL,
     "RET":   OP_RET,   "INC":   OP_INC,   "DEC":   OP_DEC,
+    
+    # --- v1.1 ---
+    "READ":       OP_READ,
+    "PRINT_CHAR": OP_PRINT_CHAR,
+    "LOAD_IND":   OP_LOAD_IND,
+    "STORE_IND":  OP_STORE_IND,
+    "CMPI":       OP_CMPI,
+    
+    # --- v1.2 ---
+    "MOVL":       OP_MOVL,
 }
 
 INSTR_SIZE = 4
 FLAG_Z = "Z"  # zero
 FLAG_N = "N"  # negative
-FLAG_C = "C"  # carry    (réservé, pas encore calculé)
+FLAG_C = "C"  # carry
 FLAG_V = "V"  
 
 FLAG_NAMES = (FLAG_Z, FLAG_N, FLAG_C, FLAG_V)
 
-
 DIRECTIVES = (".org", ".byte", ".word", ".equ", ".align")
 
-COMMENT_CHAR = ";"   
+COMMENT_CHAR = ";"

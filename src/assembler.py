@@ -35,14 +35,18 @@ class R32Assembler:
 
     def _parse_number(self, tok, line_no, max_value):
         tok = tok.strip().replace(",", "")
-        if tok in self.constants:
+        
+        # --- FIX v1.1 : On vérifie d'abord si c'est un label de données ---
+        if tok in self.labels:
+            val = self.labels[tok]
+        elif tok in self.constants:
             val = self.constants[tok]
         else:
             try:
                 # Gère le décimal (42) et l'hexadécimal (0x2A)
                 val = int(tok, 16) if tok.lower().startswith("0x") else int(tok)
             except ValueError:
-                raise ValueError(f"Ligne {line_no} : valeur invalide {tok!r}")
+                raise ValueError(f"Ligne {line_no} : valeur ou label invalide {tok!r}")
         
         if not (0 <= val <= max_value):
             raise ValueError(f"Ligne {line_no} : valeur {val} hors plage (0..{max_value})")
@@ -108,8 +112,8 @@ class R32Assembler:
             if args:
                 raise ValueError(f"Ligne {line_no} : {head} ne prend aucun argument")
 
-        elif head == "PRINT":
-            if len(args) != 1: raise ValueError(f"Ligne {line_no} : PRINT R_x")
+        elif head in ("PRINT", "READ", "PRINT_CHAR"):
+            if len(args) != 1: raise ValueError(f"Ligne {line_no} : {head} R_x")
             rd = self._resolve_reg(args[0], line_no)
 
         elif head in ("INC", "DEC", "PUSH", "POP"):
@@ -121,10 +125,24 @@ class R32Assembler:
             rd = self._resolve_reg(args[0], line_no)
             imm = self._parse_number(args[1], line_no, 0xFF)
 
-        elif head in ("ADD", "SUB", "CMP", "AND", "OR", "XOR", "SHL", "SHR"):
+        # --- NOUVEAU v1.2 : MOVL (Move Long, 16 bits) ---
+        elif head == "MOVL":
+            if len(args) != 2: raise ValueError(f"Ligne {line_no} : MOVL R_x, adresse|label")
+            rd = self._resolve_reg(args[0], line_no)
+            addr = self._parse_addr(args[1], line_no, labels) # On accepte les labels !
+            rs = addr & 0xFF         # Octet de poids faible
+            imm = (addr >> 8) & 0xFF # Octet de poids fort
+        # ------------------------------------------------
+
+        elif head in ("ADD", "SUB", "CMP", "AND", "OR", "XOR", "SHL", "SHR", "LOAD_IND", "STORE_IND"):
             if len(args) != 2: raise ValueError(f"Ligne {line_no} : {head} R_x, R_y")
             rd = self._resolve_reg(args[0], line_no)
             rs = self._resolve_reg(args[1], line_no)
+
+        elif head == "CMPI":
+            if len(args) != 2: raise ValueError(f"Ligne {line_no} : CMPI R_x, imm8")
+            rd = self._resolve_reg(args[0], line_no)
+            imm = self._parse_number(args[1], line_no, 0xFF)
 
         elif head in ("JZ", "JNZ", "JN", "JMP", "CALL"):
             if len(args) != 1: raise ValueError(f"Ligne {line_no} : {head} adresse|label")

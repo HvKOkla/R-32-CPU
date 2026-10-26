@@ -1,0 +1,107 @@
+; shell.r32 - Version simplifiée
+.equ CR, 13
+.equ LF, 10
+.equ BUFFER, 0x200
+
+; --- CODE (commence à 0) ---
+BOUCLE:
+    MOV R1, 62
+    PRINT_CHAR R1
+    MOV R1, 32
+    PRINT_CHAR R1
+
+    MOVL R2, BUFFER
+LIRE:
+    READ R1
+    CMPI R1, CR
+    JZ FIN_LECTURE
+    STORE_IND R1, R2
+    INC R2
+    JMP LIRE
+
+FIN_LECTURE:
+    MOV R1, 0
+    STORE_IND R1, R2
+
+    MOVL R2, BUFFER
+    MOVL R3, HELP_STR
+    CALL COMPARE_STR
+    CMPI R1, 1
+    JZ AFFICHE_HELP
+
+    MOVL R2, BUFFER
+    MOVL R3, EXIT_STR
+    CALL COMPARE_STR
+    CMPI R1, 1
+    JZ FIN
+
+    MOV R1, 63
+    PRINT_CHAR R1
+    MOV R1, LF
+    PRINT_CHAR R1
+    JMP BOUCLE
+
+AFFICHE_HELP:
+    MOVL R2, HELP_MSG
+    CALL PRINT_STR
+    JMP BOUCLE
+
+FIN:
+    MOV R1, LF
+    PRINT_CHAR R1
+    HALT
+
+COMPARE_STR:
+    PUSH R2
+    PUSH R3
+    PUSH R4
+    PUSH R5
+COMPARE_LOOP:
+    LOAD_IND R4, R2
+    LOAD_IND R5, R3
+    CMPI R4, 0
+    JZ FIN_CHAINE_1
+    CMPI R5, 0
+    JZ DIFFERENTES
+    CMP R4, R5
+    JNZ DIFFERENTES
+    INC R2
+    INC R3
+    JMP COMPARE_LOOP
+FIN_CHAINE_1:
+    CMPI R5, 0
+    JZ EGALES
+DIFFERENTES:
+    MOV R1, 0
+    JMP COMPARE_FIN
+EGALES:
+    MOV R1, 1
+COMPARE_FIN:
+    POP R5
+    POP R4
+    POP R3
+    POP R2
+    RET
+
+PRINT_STR:
+    PUSH R1
+    PUSH R2
+PRINT_LOOP:
+    LOAD_IND R1, R2
+    CMPI R1, 0
+    JZ PRINT_FIN
+    PRINT_CHAR R1
+    INC R2
+    JMP PRINT_LOOP
+PRINT_FIN:
+    POP R2
+    POP R1
+    RET
+
+; --- DONNÉES (à la fin) ---
+HELP_STR:
+    .byte 104, 101, 108, 112, 0
+EXIT_STR:
+    .byte 101, 120, 105, 116, 0
+HELP_MSG:
+    .byte 67, 111, 109, 109, 97, 110, 100, 101, 115, 58, 32, 104, 101, 108, 112, 10, 0

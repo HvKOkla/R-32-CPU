@@ -8,6 +8,10 @@ from isa import (
     OP_AND, OP_OR, OP_XOR, OP_SHL, OP_SHR,
     OP_JNZ, OP_JN, OP_PUSH, OP_POP, OP_CALL, OP_RET,
     OP_INC, OP_DEC,
+    # NOUVEAUX OPCODES v1.1
+    OP_READ, OP_PRINT_CHAR, OP_LOAD_IND, OP_STORE_IND, OP_CMPI,
+    # NOUVEAU OPCODE v1.2
+    OP_MOVL,
 )
 
 
@@ -82,10 +86,37 @@ class R32VM:
             self._check_reg(rd, "PRINT")
             print(f"R{rd} = {self.registers[rd]}")
 
+        elif opcode == OP_PRINT_CHAR:
+            self._check_reg(rd, "PRINT_CHAR")
+            char_val = self.registers[rd]
+            print(chr(char_val), end='', flush=True)
+
+        elif opcode == OP_READ:
+            self._check_reg(rd, "READ")
+            try:
+                user_input = input() 
+                char_val = ord(user_input[0]) if user_input else 0
+            except EOFError:
+                char_val = 0
+                
+            if rd != REG_ZERO:
+                self.registers[rd] = char_val
+            self._set_flags(char_val)
+
         elif opcode == OP_MOV:
             self._check_reg(rd, "MOV")
             if rd != REG_ZERO:
                 self.registers[rd] = imm
+
+        # --- NOUVEAU v1.2 : MOVL (Move Long, adresse 16 bits) ---
+        elif opcode == OP_MOVL:
+            self._check_reg(rd, "MOVL")
+            # On reconstitue l'adresse 16 bits à partir de rs (octet bas) et imm (octet haut)
+            address = rs | (imm << 8)
+            if rd != REG_ZERO:
+                self.registers[rd] = address
+            self._set_flags(address)
+        # -----------------------------------------------------
 
         elif opcode == OP_ADD:
             self._check_reg(rd, "ADD"); self._check_reg(rs, "ADD")
@@ -103,8 +134,11 @@ class R32VM:
 
         elif opcode == OP_CMP:
             self._check_reg(rd, "CMP"); self._check_reg(rs, "CMP")
-            # CMP ne modifie pas le registre, il met juste à jour les flags
             self._set_flags(self.registers[rd] - self.registers[rs])
+
+        elif opcode == OP_CMPI:
+            self._check_reg(rd, "CMPI")
+            self._set_flags(self.registers[rd] - imm)
 
         elif opcode == OP_AND:
             self._check_reg(rd, "AND"); self._check_reg(rs, "AND")
@@ -178,9 +212,23 @@ class R32VM:
             self._check_reg(rd, "LOAD")
             self.registers[rd] = self.mem.read(imm)
 
+        elif opcode == OP_LOAD_IND:
+            self._check_reg(rd, "LOAD_IND"); self._check_reg(rs, "LOAD_IND")
+            address = self.registers[rs]
+            value = self.mem.read(address)
+            if rd != REG_ZERO:
+                self.registers[rd] = value
+            self._set_flags(value)
+
         elif opcode == OP_STORE:
             self._check_reg(rd, "STORE")
             self.mem.write(imm, self.registers[rd] & 0xFF)
+
+        elif opcode == OP_STORE_IND:
+            self._check_reg(rd, "STORE_IND"); self._check_reg(rs, "STORE_IND")
+            address = self.registers[rs]
+            value = self.registers[rd]
+            self.mem.write(address, value & 0xFF)
 
         elif opcode == OP_PUSH:
             self._check_reg(rd, "PUSH")
@@ -194,7 +242,7 @@ class R32VM:
         else:
             raise ValueError(f"Opcode inconnu 0x{opcode:02X} à l'adresse {hex(self.pc)}")
 
-        # 3. UPDATE PC (Mise à jour du compteur de programme)
+        # 3. UPDATE PC
         self.pc = next_pc
         return True
 

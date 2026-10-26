@@ -1,30 +1,27 @@
+import sys
 from pathlib import Path
 
 from assembler import R32Assembler
 from vm import R32VM
 
-
-nom_test = "eratosthenes"
-
+DEFAULT_TEST = "shell"
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 EXAMPLES_DIR = BASE_DIR / "examples"
 BUILD_DIR = BASE_DIR / "build"
 
 
-def main():
+def run_test(nom_test):
     source_file = EXAMPLES_DIR / f"{nom_test}.r32"
     binary_file = BUILD_DIR / f"{nom_test}.bin"
 
     print(f"=== Pipeline R-32 : [{nom_test}] ===")
-
     BUILD_DIR.mkdir(parents=True, exist_ok=True)
 
-    
     print(f"[1/2] Assemblage : {source_file} -> {binary_file}")
     if not source_file.exists():
         print(f"      -> ERREUR : fichier source introuvable : {source_file}")
-        return
+        return False
 
     assembler = R32Assembler()
     try:
@@ -34,20 +31,36 @@ def main():
             print(f"      -> Labels : {assembler.labels}")
     except (ValueError, OSError) as e:
         print(f"      -> ERREUR d'assemblage : {e}")
-        return
+        return False
 
-    
     print(f"[2/2] Exécution VM")
     vm = R32VM()
-    vm.load_program(bytecode)
+    vm.load_program(bytecode) 
 
     print("--- début ---")
     try:
         steps = vm.run()
         print(f"--- fin ({steps} étapes, PC = {hex(vm.pc)}) ---")
+        return True
     except (ValueError, RuntimeError, IndexError) as e:
         print(f"--- ERREUR d'exécution : {e}")
         print(f"    PC = {hex(vm.pc)}  registres = {vm.registers}")
+        return False
+
+
+def main():
+    if len(sys.argv) > 1:
+        nom_test = sys.argv[1]
+    else:
+        nom_test = DEFAULT_TEST
+
+    success = run_test(nom_test)
+    
+    
+    if success:
+        sys.exit(0)
+    else:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
