@@ -1,0 +1,19 @@
+// =========================================================
+// fib.jr — Jinrai v0.1
+// Affiche les 10 premiers termes de Fibonacci.
+// Attendu : 0 1 1 2 3 5 8 13 21 34 (un par ligne)
+// =========================================================
+
+fn fib(n) {
+    if n < 2 { return n }
+    return fib(n - 1) + fib(n - 2)
+}
+
+fn main() {
+    var i = 0
+    while i < 10 {
+        print_dec(fib(i))
+        i = i + 1
+    }
+    halt()
+}

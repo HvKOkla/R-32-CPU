@@ -1,0 +1,8 @@
+; Programme minimal (v2.0) — attendu : 30 sur le port décimal
+.equ DEC, 0xF002
+
+MOV R1, 10
+MOV R2, 20
+ADD R1, R2
+STORE R1, DEC
+HALT

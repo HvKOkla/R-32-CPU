@@ -1,0 +1,38 @@
+; =========================================================
+; TEST IRQ TIMER (v3.0)
+; Le handler compte les interruptions dans mem[0x40].
+; Attendu : 4 IRQ servies pendant la boucle d'attente (calibré :
+; le timer tick à chaque cycle, période 20, boucle de 60 instructions
+; + cycles du handler).
+; =========================================================
+.equ T_COUNT,  0xF030
+.equ T_PERIOD, 0xF031
+.equ T_VECTOR, 0xF032
+.equ DEC,      0xF002
+
+    MOVL R7, HANDLER
+    STORE R7, T_VECTOR     ; adresse du handler
+    MOV R1, 20
+    STORE R1, T_PERIOD     ; IRQ toutes les 20 instructions
+    MOV R1, 0
+    STORE R1, 0x200        ; compteur d'IRQ = 0 (au-delà du code !)
+
+    MOV R2, 20             ; boucle d'attente (~60 instructions)
+ATTENTE:
+    DEC R2
+    CMP R2, R0
+    JNZ ATTENTE
+
+    MOV R1, 0
+    STORE R1, T_PERIOD     ; désactive le timer
+    LOAD R1, 0x200
+    STORE R1, DEC          ; affiche le nombre d'IRQ servies
+    HALT
+
+HANDLER:
+    PUSH R1
+    LOAD R1, 0x200
+    INC R1
+    STORE R1, 0x200
+    POP R1
+    IRET

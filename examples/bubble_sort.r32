@@ -1,0 +1,59 @@
+; =========================================================
+; BUBBLE SORT (v2.0) — mémoire 16 bits
+; Trie 4 valeurs et les affiche sur le port debug décimal.
+; =========================================================
+.equ DEC, 0xF002
+
+    MOV R1, 5
+    STORE R1, 100   ; mem[100] = 5
+    MOV R1, 1
+    STORE R1, 101   ; mem[101] = 1
+    MOV R1, 4
+    STORE R1, 102   ; mem[102] = 4
+    MOV R1, 2
+    STORE R1, 103   ; mem[103] = 2
+
+    MOV R5, 3       ; nombre de passes
+
+outer_loop:
+pass_1:
+    LOAD R1, 100
+    LOAD R2, 101
+    CMP R1, R2
+    JN  no_swap_1   ; si R1 < R2 : déjà dans l'ordre
+    STORE R2, 100
+    STORE R1, 101
+no_swap_1:
+
+pass_2:
+    LOAD R1, 101
+    LOAD R2, 102
+    CMP R1, R2
+    JN  no_swap_2
+    STORE R2, 101
+    STORE R1, 102
+no_swap_2:
+
+pass_3:
+    LOAD R1, 102
+    LOAD R2, 103
+    CMP R1, R2
+    JN  no_swap_3
+    STORE R2, 102
+    STORE R1, 103
+no_swap_3:
+
+    DEC R5
+    CMP R5, R0
+    JNZ outer_loop
+
+    LOAD R1, 100
+    STORE R1, DEC
+    LOAD R1, 101
+    STORE R1, DEC
+    LOAD R1, 102
+    STORE R1, DEC
+    LOAD R1, 103
+    STORE R1, DEC
+
+    HALT

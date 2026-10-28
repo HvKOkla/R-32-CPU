@@ -1,0 +1,17 @@
+// =========================================================
+// guess.jr — Jinrai v0.1
+// Jeu « devine le nombre » via l'UART.
+// =========================================================
+
+fn main() {
+    var secret = 42
+    var g = 0
+    while g != secret {
+        print("DEVINE ? ")
+        g = read_dec()
+        if g < secret { print("PLUS GRAND\n") }
+        if g > secret { print("PLUS PETIT\n") }
+    }
+    print("GAGNE !\n")
+    halt()
+}
