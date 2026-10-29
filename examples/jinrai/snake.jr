@@ -166,7 +166,7 @@ fn main() {
     while alive == 1 {
         read_input()
         alive = move_head()
-        var d = 2500               // vitesse du jeu (attente)
+        var d = 1200               // vitesse du jeu (attente)
         while d > 0 { d = d - 1 }
     }
     game_over()

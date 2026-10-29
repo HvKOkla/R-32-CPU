@@ -1061,7 +1061,7 @@ set0_main_4:
     CALL move_head
     MOV R6, R1
     MOV R4, R6
-    MOV R6, 2500
+    MOV R6, 1200
     MOV R5, R6
 while_main_5:
     MOV R6, R5

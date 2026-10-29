@@ -38,9 +38,17 @@ def run_test(nom_test):
     vm = R32VM()
     vm.load_program(bytecode)
 
+    # budget d'étapes optionnel : python src/main.py snake 5000000
+    max_steps = 5_000_000
+    if len(sys.argv) > 2:
+        try:
+            max_steps = int(sys.argv[2])
+        except ValueError:
+            print(f"      -> budget invalide {sys.argv[2]!r}, 1000000 utilisé")
+
     print("--- début ---")
     try:
-        steps = vm.run()
+        steps = vm.run(max_steps=max_steps)
         print(f"--- fin ({steps} étapes, PC = {hex(vm.pc)}) ---")
         return True
     except (ValueError, RuntimeError, IndexError) as e:
