@@ -1,0 +1,174 @@
+// =========================================================
+// snake.jr — Jinrai v1.0 + périphériques v3.1
+// Snake en mode texte VGA 80x25. Flèches ou ZQSD (scancodes
+// physiques), ECHAP quitte.
+//
+// RÈGLE D'OR : les données vivent AU-DELÀ du programme !
+// Ce programme fait ~1900 mots -> état en 0x1000+, anneau
+// en 0x1100+. (Mettre des données à 0x0300 écraserait le
+// code : leçon apprise sur le tas, comme le compteur IRQ
+// de la nuit dernière.)
+// =========================================================
+
+// --- état du jeu (mémoire) ---
+// 0x1000 direction (0=haut 1=droite 2=bas 3=gauche)
+// 0x1001 longueur   0x1002 tête (index anneau)
+// 0x1003 nourriture 0x1004 score
+// 0x1005 tête x     0x1006 tête y
+
+fn put(pos, c) {
+    poke(0x8000 + pos, c)
+}
+
+fn clear_screen() {
+    var i = 0
+    while i < 2000 {
+        put(i, ' ')
+        i = i + 1
+    }
+}
+
+fn draw_border() {
+    var i = 0
+    while i < 80 {
+        put(i, '-')
+        put(1920 + i, '-')
+        i = i + 1
+    }
+    i = 0
+    while i < 25 {
+        put(i * 80, '|')
+        put(i * 80 + 79, '|')
+        i = i + 1
+    }
+}
+
+// anneau du corps : une correction suffit (plage [-63, 64])
+fn ring_read(i) {
+    if i < 0 { i = i + 64 }
+    if i > 63 { i = i - 64 }
+    return peek(0x1100 + i)
+}
+
+fn ring_write(i, v) {
+    if i < 0 { i = i + 64 }
+    if i > 63 { i = i - 64 }
+    poke(0x1100 + i, v)
+}
+
+// nourriture : position pseudo-aléatoire déterministe (basée sur le score)
+// v2 branchera le timer pour du vrai hasard matériel
+fn place_food() {
+    var t = peek(0x1004) * 73 + 41
+    var x = 1 + t % 78
+    var y = 1 + (t / 78) % 23
+    var pos = y * 80 + x
+    poke(0x1003, pos)
+    put(pos, '*')
+}
+
+fn erase_tail() {
+    var t = peek(0x1002) - peek(0x1001) + 1
+    put(ring_read(t), ' ')
+}
+
+fn self_hit(pos) {
+    var len = peek(0x1001)
+    var head = peek(0x1002)
+    var i = 0
+    while i < len {
+        if ring_read(head - i) == pos { return 1 }
+        i = i + 1
+    }
+    return 0
+}
+
+// avance la tête ; retourne 0 si mort (mur ou soi-même)
+fn move_head() {
+    var x = peek(0x1005)
+    var y = peek(0x1006)
+    var d = peek(0x1000)
+    if d == 0 { y = y - 1 }
+    if d == 1 { x = x + 1 }
+    if d == 2 { y = y + 1 }
+    if d == 3 { x = x - 1 }
+    if x < 1 { return 0 }
+    if x > 78 { return 0 }
+    if y < 1 { return 0 }
+    if y > 23 { return 0 }
+    var pos = y * 80 + x
+    if self_hit(pos) == 1 { return 0 }
+    var head = peek(0x1002) + 1
+    ring_write(head, pos)
+    poke(0x1002, head)
+    poke(0x1005, x)
+    poke(0x1006, y)
+    put(pos, '#')
+    if pos == peek(0x1003) {
+        poke(0x1001, peek(0x1001) + 1)   // grandir
+        poke(0x1004, peek(0x1004) + 1)   // score
+        place_food()
+    } else {
+        erase_tail()
+    }
+    return 1
+}
+
+fn read_input() {
+    if peek(0xF051) == 0 { return }
+    var c = peek(0xF050)
+    var nd = 99
+    if c == 0xE0 {                     // préfixe étendu : la flèche vient après
+        while peek(0xF051) == 0 { }
+        c = peek(0xF050)
+        if c == 0x75 { nd = 0 }
+        if c == 0x72 { nd = 2 }
+        if c == 0x74 { nd = 1 }
+        if c == 0x6B { nd = 3 }
+    } else {
+        if c == 0x76 { halt() }        // ECHAP
+        if c == 0x1D { nd = 0 }        // W = haut
+        if c == 0x23 { nd = 1 }        // D = droite
+        if c == 0x1B { nd = 2 }        // S = bas
+        if c == 0x1C { nd = 3 }        // A = gauche
+    }
+    if nd == 99 { return }
+    if (nd + 2) % 4 == peek(0x1000) { return }   // demi-tour interdit
+    poke(0x1000, nd)
+}
+
+fn game_over() {
+    put(996, 'G') put(997, 'A') put(998, 'M') put(999, 'E')
+    put(1000, ' ')
+    put(1001, 'O') put(1002, 'V') put(1003, 'E') put(1004, 'R')
+    var s = peek(0x1004)
+    put(1063, '0' + s / 10 % 10)
+    put(1064, '0' + s % 10)
+}
+
+fn main() {
+    clear_screen()
+    draw_border()
+    // serpent initial : (10,12)-(11,12)-(12,12), tête à droite
+    poke(0x1100, 970)
+    poke(0x1101, 971)
+    poke(0x1102, 972)
+    poke(0x1002, 2)    // index tête
+    poke(0x1001, 3)    // longueur
+    poke(0x1000, 1)    // direction = droite
+    poke(0x1005, 12)   // x tête
+    poke(0x1006, 12)   // y tête
+    poke(0x1004, 0)    // score
+    put(970, '#') put(971, '#') put(972, '#')
+    place_food()
+
+    var alive = 1
+    while alive == 1 {
+        read_input()
+        alive = move_head()
+        var d = 2500               // vitesse du jeu (attente)
+        while d > 0 { d = d - 1 }
+    }
+    game_over()
+    halt()
+}
