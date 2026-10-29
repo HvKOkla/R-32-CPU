@@ -1,0 +1,28 @@
+// =========================================================
+// irq_demo.jr — Jinrai v0.1 + ISA v3.0
+// Handler d'interruption timer en Jinrai (naked + asm),
+// boucle principale en haut niveau. Attendu : 42 sur le
+// port debug décimal.
+// =========================================================
+
+naked fn handler() {
+    asm("PUSH R1")
+    asm("LOAD R1, 0x200")   // compteur en 0x0200 (au-delà du code !)
+    asm("INC R1")
+    asm("STORE R1, 0x200")
+    asm("POP R1")
+    iret()
+}
+
+fn main() {
+    poke(0xF032, addr(handler))   // vector IRQ
+    poke(0xF031, 10)              // période 10 cycles
+    poke(0x200, 0)                // compteur d'IRQ
+    var i = 0
+    while i < 20 {
+        i = i + 1
+    }
+    poke(0xF031, 0)               // timer off
+    print_dec(peek(0x200))        // nombre d'IRQ servies (calibré)
+    halt()
+}

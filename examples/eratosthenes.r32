@@ -1,0 +1,54 @@
+; =========================================================
+; CRIBLE D'ÉRATOSTHÈNE (v2.0)
+; Affiche le contenu brut du tableau (0 = premier, 1 = barré)
+; =========================================================
+.equ DEC, 0xF002
+
+    MOV R1, 0
+    STORE R1, 100
+    STORE R1, 101
+    STORE R1, 102
+    STORE R1, 103
+    STORE R1, 104
+    STORE R1, 105
+    STORE R1, 106
+    STORE R1, 107
+    STORE R1, 108
+    STORE R1, 109
+
+    ; 0 et 1 ne sont pas premiers
+    MOV R1, 1
+    STORE R1, 100
+    STORE R1, 101
+
+    ; crible par 2 : barre 4, 6, 8
+    STORE R1, 104
+    STORE R1, 106
+    STORE R1, 108
+
+    ; crible par 3 : barre 6, 9
+    STORE R1, 106
+    STORE R1, 109
+
+    LOAD R1, 100
+    STORE R1, DEC
+    LOAD R1, 101
+    STORE R1, DEC
+    LOAD R1, 102
+    STORE R1, DEC
+    LOAD R1, 103
+    STORE R1, DEC
+    LOAD R1, 104
+    STORE R1, DEC
+    LOAD R1, 105
+    STORE R1, DEC
+    LOAD R1, 106
+    STORE R1, DEC
+    LOAD R1, 107
+    STORE R1, DEC
+    LOAD R1, 108
+    STORE R1, DEC
+    LOAD R1, 109
+    STORE R1, DEC
+
+    HALT

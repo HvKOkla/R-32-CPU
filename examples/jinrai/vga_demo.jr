@@ -1,0 +1,97 @@
+// =========================================================
+// vga_demo.jr — Jinrai + périphériques v3.1
+// Écran texte 80x25 (VRAM 0x8000), clavier PS/2 (scancodes),
+// souris PS/2 (paquets 3 octets). ECHAP (0x76) quitte.
+// Découpé en fonctions : max 8 registres par fonction !
+// =========================================================
+
+fn hexchar(n) {
+    if n < 10 { return 48 + n }
+    return 55 + n
+}
+
+fn clear_screen() {
+    var i = 0
+    while i < 2000 {
+        poke(0x8000 + i, ' ')
+        i = i + 1
+    }
+}
+
+fn draw_border() {
+    var bx = 1920
+    while bx < 2000 {
+        poke(0x8000 + bx, '-')
+        bx = bx + 1
+    }
+}
+
+fn banner() {
+    vputc(0, 'R') vputc(1, '-') vputc(2, '3') vputc(3, '2')
+    vputc(4, ' ') vputc(5, 'V') vputc(6, 'G') vputc(7, 'A')
+    vputc(8, ' ') vputc(9, '8') vputc(10, '0') vputc(11, 'x')
+    vputc(12, '2') vputc(13, '5')
+    vputc(80, 'E') vputc(81, 'C') vputc(82, 'H') vputc(83, 'A')
+    vputc(84, 'P') vputc(85, ' ') vputc(86, '=') vputc(87, ' ')
+    vputc(88, 'q') vputc(89, 'u') vputc(90, 'i') vputc(91, 't')
+}
+
+fn vputc(pos, c) {              // pos = row * 80 + col (0..1999)
+    poke(0x8000 + pos, c)
+}
+
+// affiche le scancode à la position base ; retourne la base suivante
+fn show_key(base) {
+    var code = 0
+    while peek(0xF051) == 0 { }
+    code = peek(0xF050)
+    if code == 0x76 { halt() }            // ECHAP
+    vputc(base, 'S')
+    vputc(base + 1, 'C')
+    vputc(base + 3, hexchar(code / 16))
+    vputc(base + 4, hexchar(code % 16))
+    base = base + 80
+    if base > 1640 { base = 240 }         // reste dans les lignes 3..20
+    return base
+}
+
+// consomme un paquet souris si présent ; retourne my*256+mx
+fn mouse_tick(mx, my) {
+    if peek(0xF061) == 0 { return my * 256 + mx }
+    var dx = peek(0xF060)   // b0 (boutons : ignoré ici)
+    dx = peek(0xF060)
+    var dy = peek(0xF060)
+    if dx > 127 { dx = dx - 256 }
+    if dy > 127 { dy = dy - 256 }
+    vputc(my * 80 + mx, ' ')               // efface l'ancien curseur
+    mx = mx + dx
+    my = my - dy
+    if mx > 32767 { mx = 0 }              // clamps (wrap 16 bits)
+    if mx > 79 { mx = 79 }
+    if my > 32767 { my = 0 }
+    if my > 24 { my = 24 }
+    vputc(my * 80 + mx, '#')
+    poke(0xF040, mx)                      // curseur matériel suit
+    poke(0xF041, my)
+    return my * 256 + mx
+}
+
+fn main() {
+    clear_screen()
+    banner()
+    draw_border()
+    poke(0xF040, 0)
+    poke(0xF041, 0)
+
+    var base = 240                        // ligne 3
+    var mx = 40
+    var my = 12
+
+    while 1 == 1 {
+        base = show_key(base)
+        var p = mouse_tick(mx, my)
+        mx = p % 256
+        my = p / 256
+    }
+    halt()
+}

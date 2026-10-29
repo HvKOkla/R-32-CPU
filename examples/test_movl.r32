@@ -1,0 +1,26 @@
+; =========================================================
+; TEST MOVL / pointeurs / mots 16 bits (v2.0)
+; Attendu : 'A', puis 300, puis 0x1234 sur le port décimal
+; =========================================================
+.equ TX, 0xF000
+.equ DEC, 0xF002
+
+    MOVL R1, 0x200      ; adresse 16 bits via constante
+    MOV  R2, 65         ; 'A'
+    STORE_IND R2, R1    ; mem[0x200] = 'A'
+    LOAD_IND R3, R1     ; relecture indirecte
+    STORE R3, TX        ; attendu : A
+
+    LOAD R5, data       ; chargement direct d'un mot 16 bits
+    STORE R5, DEC       ; attendu : 300
+
+    MOVL R4, data       ; adresse via label
+    LOAD_IND R6, R4
+    STORE R6, DEC       ; attendu : 300
+
+    MOV R7, 0x1234
+    STORE R7, DEC       ; attendu : 4660
+    HALT
+
+data:
+    .word 300

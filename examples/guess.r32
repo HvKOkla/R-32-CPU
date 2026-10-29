@@ -1,0 +1,57 @@
+; =========================================================
+; JEU : DEVINE LE NOMBRE (v2.0)
+; Le nombre secret (42) est en R3. Codes : 0=gagné, 1=trop petit,
+; 2=trop grand, 3=erreur.
+; =========================================================
+.equ DEC, 0xF002
+
+    MOV R3, 42      ; le nombre secret
+
+    ; --- ESSAI 1 : 20 ---
+    MOV R2, 20
+    CMP R2, R3
+    JZ  gagne
+    JN  trop_petit  ; R2 < R3 -> trop petit
+    JMP trop_grand
+
+trop_petit:
+    MOV R1, 1
+    STORE R1, DEC
+    JMP essai2
+
+trop_grand:
+    MOV R1, 2
+    STORE R1, DEC
+    JMP essai2
+
+essai2:
+    ; --- ESSAI 2 : 50 ---
+    MOV R2, 50
+    CMP R2, R3
+    JZ  gagne
+    JN  trop_petit_2
+    JMP trop_grand_2
+
+trop_petit_2:
+    MOV R1, 1
+    STORE R1, DEC
+    JMP essai3
+
+trop_grand_2:
+    MOV R1, 2
+    STORE R1, DEC
+    JMP essai3
+
+essai3:
+    ; --- ESSAI 3 : 42 (la bonne réponse !) ---
+    MOV R2, 42
+    CMP R2, R3
+    JZ  gagne
+    MOV R1, 3
+    STORE R1, DEC
+    HALT
+
+gagne:
+    MOV R1, 0
+    STORE R1, DEC
+    HALT

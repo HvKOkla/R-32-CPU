@@ -1,0 +1,21 @@
+; =========================================================
+; FIBONACCI SEQUENCE (v2.1)
+; Affiche les 10 premiers termes via le port debug décimal
+; =========================================================
+.equ DEC, 0xF002
+
+    MOV R1, 0       ; a = F(0)
+    MOV R2, 1       ; b = F(1)
+    MOV R3, 10      ; compteur
+
+loop:
+    STORE R1, DEC   ; affiche le terme courant
+    MOV R5, R2      ; tmp = b
+    ADD R5, R1      ; tmp = a + b
+    MOV R1, R2      ; a = b
+    MOV R2, R5      ; b = tmp
+    DEC R3
+    CMP R3, R0      ; R3 == 0 ?
+    JNZ loop
+
+    HALT

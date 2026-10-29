@@ -1,0 +1,713 @@
+; ============================================================
+; Généré par Jinrai v0.1 — ne pas éditer à la main
+; Convention : args R2/R3, retour R1, R4-R11 + LR callee-saved
+; ============================================================
+
+    CALL main
+    HALT
+
+hexchar:
+    PUSH R4
+    PUSH R5
+    PUSH R6
+    PUSH R14
+    MOV R4, R2
+    MOV R5, R4
+    MOV R6, 10
+    CMP R5, R6
+    MOV R5, 0
+    JN set1_hexchar_1
+    JMP set0_hexchar_2
+set1_hexchar_1:
+    MOV R5, 1
+set0_hexchar_2:
+    CMPI R5, 0
+    JZ else_hexchar_3
+    MOV R5, 48
+    MOV R6, R4
+    ADD R5, R6
+    MOV R1, R5
+    JMP __ret_hexchar
+    JMP endif_hexchar_4
+else_hexchar_3:
+endif_hexchar_4:
+    MOV R5, 55
+    MOV R6, R4
+    ADD R5, R6
+    MOV R1, R5
+    JMP __ret_hexchar
+__ret_hexchar:
+    POP R14
+    POP R6
+    POP R5
+    POP R4
+    RET
+
+clear_screen:
+    PUSH R4
+    PUSH R5
+    PUSH R6
+    PUSH R7
+    PUSH R14
+    MOV R5, 0
+    MOV R4, R5
+while_clear_screen_1:
+    MOV R5, R4
+    MOV R6, 2000
+    CMP R5, R6
+    MOV R5, 0
+    JN set1_clear_screen_3
+    JMP set0_clear_screen_4
+set1_clear_screen_3:
+    MOV R5, 1
+set0_clear_screen_4:
+    CMPI R5, 0
+    JZ wend_clear_screen_2
+    MOV R5, 32768
+    MOV R6, R4
+    ADD R5, R6
+    MOV R6, 32
+    STORE_IND R6, R5
+    MOV R5, R4
+    MOV R6, 1
+    ADD R5, R6
+    MOV R4, R5
+    JMP while_clear_screen_1
+wend_clear_screen_2:
+__ret_clear_screen:
+    POP R14
+    POP R7
+    POP R6
+    POP R5
+    POP R4
+    RET
+
+draw_border:
+    PUSH R4
+    PUSH R5
+    PUSH R6
+    PUSH R7
+    PUSH R14
+    MOV R5, 1920
+    MOV R4, R5
+while_draw_border_1:
+    MOV R5, R4
+    MOV R6, 2000
+    CMP R5, R6
+    MOV R5, 0
+    JN set1_draw_border_3
+    JMP set0_draw_border_4
+set1_draw_border_3:
+    MOV R5, 1
+set0_draw_border_4:
+    CMPI R5, 0
+    JZ wend_draw_border_2
+    MOV R5, 32768
+    MOV R6, R4
+    ADD R5, R6
+    MOV R6, 45
+    STORE_IND R6, R5
+    MOV R5, R4
+    MOV R6, 1
+    ADD R5, R6
+    MOV R4, R5
+    JMP while_draw_border_1
+wend_draw_border_2:
+__ret_draw_border:
+    POP R14
+    POP R7
+    POP R6
+    POP R5
+    POP R4
+    RET
+
+banner:
+    PUSH R4
+    PUSH R5
+    PUSH R14
+    MOV R4, 0
+    MOV R5, 82
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 1
+    MOV R5, 45
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 2
+    MOV R5, 51
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 3
+    MOV R5, 50
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 4
+    MOV R5, 32
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 5
+    MOV R5, 86
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 6
+    MOV R5, 71
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 7
+    MOV R5, 65
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 8
+    MOV R5, 32
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 9
+    MOV R5, 56
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 10
+    MOV R5, 48
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 11
+    MOV R5, 120
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 12
+    MOV R5, 50
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 13
+    MOV R5, 53
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 80
+    MOV R5, 69
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 81
+    MOV R5, 67
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 82
+    MOV R5, 72
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 83
+    MOV R5, 65
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 84
+    MOV R5, 80
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 85
+    MOV R5, 32
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 86
+    MOV R5, 61
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 87
+    MOV R5, 32
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 88
+    MOV R5, 113
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 89
+    MOV R5, 117
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 90
+    MOV R5, 105
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+    MOV R4, 91
+    MOV R5, 116
+    MOV R2, R4
+    MOV R3, R5
+    CALL vputc
+__ret_banner:
+    POP R14
+    POP R5
+    POP R4
+    RET
+
+vputc:
+    PUSH R4
+    PUSH R5
+    PUSH R6
+    PUSH R7
+    PUSH R8
+    PUSH R14
+    MOV R4, R2
+    MOV R5, R3
+    MOV R6, 32768
+    MOV R7, R4
+    ADD R6, R7
+    MOV R7, R5
+    STORE_IND R7, R6
+__ret_vputc:
+    POP R14
+    POP R8
+    POP R7
+    POP R6
+    POP R5
+    POP R4
+    RET
+
+show_key:
+    PUSH R4
+    PUSH R5
+    PUSH R6
+    PUSH R7
+    PUSH R8
+    PUSH R9
+    PUSH R14
+    MOV R4, R2
+    MOV R6, 0
+    MOV R5, R6
+while_show_key_1:
+    MOV R6, 61521
+    LOAD_IND R6, R6
+    MOV R7, 0
+    CMP R6, R7
+    MOV R6, 0
+    JNZ set0_show_key_4
+    MOV R6, 1
+set0_show_key_4:
+    CMPI R6, 0
+    JZ wend_show_key_2
+    JMP while_show_key_1
+wend_show_key_2:
+    MOV R6, 61520
+    LOAD_IND R6, R6
+    MOV R5, R6
+    MOV R6, R5
+    MOV R7, 118
+    CMP R6, R7
+    MOV R6, 0
+    JNZ set0_show_key_6
+    MOV R6, 1
+set0_show_key_6:
+    CMPI R6, 0
+    JZ else_show_key_7
+    HALT
+    JMP endif_show_key_8
+else_show_key_7:
+endif_show_key_8:
+    MOV R6, R4
+    MOV R7, 83
+    MOV R2, R6
+    MOV R3, R7
+    CALL vputc
+    MOV R6, R4
+    MOV R7, 1
+    ADD R6, R7
+    MOV R7, 67
+    MOV R2, R6
+    MOV R3, R7
+    CALL vputc
+    MOV R6, R4
+    MOV R7, 3
+    ADD R6, R7
+    MOV R7, R5
+    MOV R8, 16
+    MOV R2, R7
+    MOV R3, R8
+    CALL __jin_div16
+    MOV R7, R1
+    MOV R2, R7
+    CALL hexchar
+    MOV R7, R1
+    MOV R2, R6
+    MOV R3, R7
+    CALL vputc
+    MOV R6, R4
+    MOV R7, 4
+    ADD R6, R7
+    MOV R7, R5
+    MOV R8, 16
+    MOV R2, R7
+    MOV R3, R8
+    CALL __jin_div16
+    MOV R7, R3
+    MOV R2, R7
+    CALL hexchar
+    MOV R7, R1
+    MOV R2, R6
+    MOV R3, R7
+    CALL vputc
+    MOV R6, R4
+    MOV R7, 80
+    ADD R6, R7
+    MOV R4, R6
+    MOV R6, R4
+    MOV R7, 1640
+    CMP R7, R6
+    MOV R6, 0
+    JN set1_show_key_9
+    JMP set0_show_key_10
+set1_show_key_9:
+    MOV R6, 1
+set0_show_key_10:
+    CMPI R6, 0
+    JZ else_show_key_11
+    MOV R6, 240
+    MOV R4, R6
+    JMP endif_show_key_12
+else_show_key_11:
+endif_show_key_12:
+    MOV R6, R4
+    MOV R1, R6
+    JMP __ret_show_key
+__ret_show_key:
+    POP R14
+    POP R9
+    POP R8
+    POP R7
+    POP R6
+    POP R5
+    POP R4
+    RET
+
+mouse_tick:
+    PUSH R4
+    PUSH R5
+    PUSH R6
+    PUSH R7
+    PUSH R8
+    PUSH R9
+    PUSH R10
+    PUSH R14
+    MOV R4, R2
+    MOV R5, R3
+    MOV R8, 61537
+    LOAD_IND R8, R8
+    MOV R9, 0
+    CMP R8, R9
+    MOV R8, 0
+    JNZ set0_mouse_tick_2
+    MOV R8, 1
+set0_mouse_tick_2:
+    CMPI R8, 0
+    JZ else_mouse_tick_3
+    MOV R8, R5
+    MOV R9, 256
+    MOV R2, R8
+    MOV R3, R9
+    CALL __jin_mul16
+    MOV R8, R1
+    MOV R9, R4
+    ADD R8, R9
+    MOV R1, R8
+    JMP __ret_mouse_tick
+    JMP endif_mouse_tick_4
+else_mouse_tick_3:
+endif_mouse_tick_4:
+    MOV R8, 61536
+    LOAD_IND R8, R8
+    MOV R6, R8
+    MOV R8, 61536
+    LOAD_IND R8, R8
+    MOV R6, R8
+    MOV R8, 61536
+    LOAD_IND R8, R8
+    MOV R7, R8
+    MOV R8, R6
+    MOV R9, 127
+    CMP R9, R8
+    MOV R8, 0
+    JN set1_mouse_tick_5
+    JMP set0_mouse_tick_6
+set1_mouse_tick_5:
+    MOV R8, 1
+set0_mouse_tick_6:
+    CMPI R8, 0
+    JZ else_mouse_tick_7
+    MOV R8, R6
+    MOV R9, 256
+    SUB R8, R9
+    MOV R6, R8
+    JMP endif_mouse_tick_8
+else_mouse_tick_7:
+endif_mouse_tick_8:
+    MOV R8, R7
+    MOV R9, 127
+    CMP R9, R8
+    MOV R8, 0
+    JN set1_mouse_tick_9
+    JMP set0_mouse_tick_10
+set1_mouse_tick_9:
+    MOV R8, 1
+set0_mouse_tick_10:
+    CMPI R8, 0
+    JZ else_mouse_tick_11
+    MOV R8, R7
+    MOV R9, 256
+    SUB R8, R9
+    MOV R7, R8
+    JMP endif_mouse_tick_12
+else_mouse_tick_11:
+endif_mouse_tick_12:
+    MOV R8, R5
+    MOV R9, 80
+    MOV R2, R8
+    MOV R3, R9
+    CALL __jin_mul16
+    MOV R8, R1
+    MOV R9, R4
+    ADD R8, R9
+    MOV R9, 32
+    MOV R2, R8
+    MOV R3, R9
+    CALL vputc
+    MOV R8, R4
+    MOV R9, R6
+    ADD R8, R9
+    MOV R4, R8
+    MOV R8, R5
+    MOV R9, R7
+    SUB R8, R9
+    MOV R5, R8
+    MOV R8, R4
+    MOV R9, 32767
+    CMP R9, R8
+    MOV R8, 0
+    JN set1_mouse_tick_13
+    JMP set0_mouse_tick_14
+set1_mouse_tick_13:
+    MOV R8, 1
+set0_mouse_tick_14:
+    CMPI R8, 0
+    JZ else_mouse_tick_15
+    MOV R8, 0
+    MOV R4, R8
+    JMP endif_mouse_tick_16
+else_mouse_tick_15:
+endif_mouse_tick_16:
+    MOV R8, R4
+    MOV R9, 79
+    CMP R9, R8
+    MOV R8, 0
+    JN set1_mouse_tick_17
+    JMP set0_mouse_tick_18
+set1_mouse_tick_17:
+    MOV R8, 1
+set0_mouse_tick_18:
+    CMPI R8, 0
+    JZ else_mouse_tick_19
+    MOV R8, 79
+    MOV R4, R8
+    JMP endif_mouse_tick_20
+else_mouse_tick_19:
+endif_mouse_tick_20:
+    MOV R8, R5
+    MOV R9, 32767
+    CMP R9, R8
+    MOV R8, 0
+    JN set1_mouse_tick_21
+    JMP set0_mouse_tick_22
+set1_mouse_tick_21:
+    MOV R8, 1
+set0_mouse_tick_22:
+    CMPI R8, 0
+    JZ else_mouse_tick_23
+    MOV R8, 0
+    MOV R5, R8
+    JMP endif_mouse_tick_24
+else_mouse_tick_23:
+endif_mouse_tick_24:
+    MOV R8, R5
+    MOV R9, 24
+    CMP R9, R8
+    MOV R8, 0
+    JN set1_mouse_tick_25
+    JMP set0_mouse_tick_26
+set1_mouse_tick_25:
+    MOV R8, 1
+set0_mouse_tick_26:
+    CMPI R8, 0
+    JZ else_mouse_tick_27
+    MOV R8, 24
+    MOV R5, R8
+    JMP endif_mouse_tick_28
+else_mouse_tick_27:
+endif_mouse_tick_28:
+    MOV R8, R5
+    MOV R9, 80
+    MOV R2, R8
+    MOV R3, R9
+    CALL __jin_mul16
+    MOV R8, R1
+    MOV R9, R4
+    ADD R8, R9
+    MOV R9, 35
+    MOV R2, R8
+    MOV R3, R9
+    CALL vputc
+    MOV R8, 61504
+    MOV R9, R4
+    STORE_IND R9, R8
+    MOV R8, 61505
+    MOV R9, R5
+    STORE_IND R9, R8
+    MOV R8, R5
+    MOV R9, 256
+    MOV R2, R8
+    MOV R3, R9
+    CALL __jin_mul16
+    MOV R8, R1
+    MOV R9, R4
+    ADD R8, R9
+    MOV R1, R8
+    JMP __ret_mouse_tick
+__ret_mouse_tick:
+    POP R14
+    POP R10
+    POP R9
+    POP R8
+    POP R7
+    POP R6
+    POP R5
+    POP R4
+    RET
+
+main:
+    PUSH R4
+    PUSH R5
+    PUSH R6
+    PUSH R7
+    PUSH R8
+    PUSH R9
+    PUSH R14
+    CALL clear_screen
+    CALL banner
+    CALL draw_border
+    MOV R8, 61504
+    MOV R9, 0
+    STORE_IND R9, R8
+    MOV R8, 61505
+    MOV R9, 0
+    STORE_IND R9, R8
+    MOV R8, 240
+    MOV R4, R8
+    MOV R8, 40
+    MOV R5, R8
+    MOV R8, 12
+    MOV R6, R8
+while_main_1:
+    MOV R8, 1
+    MOV R9, 1
+    CMP R8, R9
+    MOV R8, 0
+    JNZ set0_main_4
+    MOV R8, 1
+set0_main_4:
+    CMPI R8, 0
+    JZ wend_main_2
+    MOV R8, R4
+    MOV R2, R8
+    CALL show_key
+    MOV R8, R1
+    MOV R4, R8
+    MOV R8, R5
+    MOV R9, R6
+    MOV R2, R8
+    MOV R3, R9
+    CALL mouse_tick
+    MOV R8, R1
+    MOV R7, R8
+    MOV R8, R7
+    MOV R9, 256
+    MOV R2, R8
+    MOV R3, R9
+    CALL __jin_div16
+    MOV R8, R3
+    MOV R5, R8
+    MOV R8, R7
+    MOV R9, 256
+    MOV R2, R8
+    MOV R3, R9
+    CALL __jin_div16
+    MOV R8, R1
+    MOV R6, R8
+    JMP while_main_1
+wend_main_2:
+    HALT
+__ret_main:
+    POP R14
+    POP R9
+    POP R8
+    POP R7
+    POP R6
+    POP R5
+    POP R4
+    RET
+
+__jin_mul16:            ; R2*R3 -> R1 (additions répétées)
+    PUSH R4
+    PUSH R5
+    MOV R4, R2
+    MOV R5, R3
+    MOV R1, 0
+__jin_mul_loop:
+    CMPI R5, 0
+    JZ __jin_mul_done
+    ADD R1, R4
+    DEC R5
+    JMP __jin_mul_loop
+__jin_mul_done:
+    POP R5
+    POP R4
+    RET
+
+__jin_div16:            ; R2/R3 -> R1 (quotient), R3 (reste)
+    PUSH R4
+    PUSH R5
+    MOV R4, R2
+    MOV R5, R3
+    MOV R1, 0
+    CMPI R5, 0
+    JZ __jin_div_done    ; div par 0 -> quotient 0, reste R2
+__jin_div_loop:
+    CMP R4, R5
+    JN __jin_div_done
+    SUB R4, R5
+    INC R1
+    JMP __jin_div_loop
+__jin_div_done:
+    MOV R3, R4
+    POP R5
+    POP R4
+    RET
+
+

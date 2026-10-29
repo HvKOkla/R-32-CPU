@@ -1,0 +1,129 @@
+; =========================================================
+; SHELL INTERACTIF (v2.1 — UART MMIO, chaînes, char literals)
+; Commandes : help, exit
+; =========================================================
+.equ UART_DATA,   0xF000
+.equ UART_STATUS, 0xF001
+.equ CR, '\r'
+.equ BUFFER, 0x200
+
+BOUCLE:
+    MOV R1, '>'
+    STORE R1, UART_DATA
+    MOV R1, ' '
+    STORE R1, UART_DATA
+
+    MOVL R2, BUFFER
+LIRE:
+    CALL GETC           ; R1 = caractère reçu
+    CMPI R1, CR
+    JZ FIN_LECTURE
+    CMPI R1, 0          ; EOF ?
+    JZ CMD_VIDE
+    STORE_IND R1, R2    ; buffer[R2++] = R1
+    INC R2
+    JMP LIRE
+
+CMD_VIDE:
+    MOVL R4, BUFFER
+    CMP R2, R4          ; buffer vide ?
+    JZ FIN              ; -> on quitte proprement
+    JMP FIN_LECTURE
+
+FIN_LECTURE:
+    MOV R1, 0
+    STORE_IND R1, R2    ; terminateur NUL
+
+    MOVL R2, BUFFER
+    MOVL R3, HELP_STR
+    CALL COMPARE_STR
+    CMPI R1, 1
+    JZ AFFICHE_HELP
+
+    MOVL R2, BUFFER
+    MOVL R3, EXIT_STR
+    CALL COMPARE_STR
+    CMPI R1, 1
+    JZ FIN
+
+    MOV R1, '?'
+    STORE R1, UART_DATA
+    MOV R1, '\n'
+    STORE R1, UART_DATA
+    JMP BOUCLE
+
+AFFICHE_HELP:
+    MOVL R2, HELP_MSG
+    CALL PRINT_STR
+    JMP BOUCLE
+
+FIN:
+    MOV R1, '\n'
+    STORE R1, UART_DATA
+    HALT
+
+; --- R1 = prochain caractère (0 à EOF) ---
+GETC:
+    PUSH R7
+    MOV R7, 1
+GETC_POLL:
+    LOAD R1, UART_STATUS
+    AND R1, R7          ; bit0 = caractère disponible ?
+    JZ GETC_POLL
+    LOAD R1, UART_DATA
+    POP R7
+    RET
+
+; --- compare les chaînes pointées par R2 et R3 -> R1 = 1 si égales ---
+COMPARE_STR:
+    PUSH R2
+    PUSH R3
+    PUSH R4
+    PUSH R5
+COMPARE_LOOP:
+    LOAD_IND R4, R2
+    LOAD_IND R5, R3
+    CMPI R4, 0
+    JZ FIN_CHAINE_1
+    CMPI R5, 0
+    JZ DIFFERENTES
+    CMP R4, R5
+    JNZ DIFFERENTES
+    INC R2
+    INC R3
+    JMP COMPARE_LOOP
+FIN_CHAINE_1:
+    CMPI R5, 0
+    JZ EGALES
+DIFFERENTES:
+    MOV R1, 0
+    JMP COMPARE_FIN
+EGALES:
+    MOV R1, 1
+COMPARE_FIN:
+    POP R5
+    POP R4
+    POP R3
+    POP R2
+    RET
+
+; --- affiche la chaîne pointée par R2 sur l'UART ---
+PRINT_STR:
+    PUSH R1
+    PUSH R2
+PRINT_LOOP:
+    LOAD_IND R1, R2
+    CMPI R1, 0
+    JZ PRINT_FIN
+    STORE R1, UART_DATA
+    INC R2
+    JMP PRINT_LOOP
+PRINT_FIN:
+    POP R2
+    POP R1
+    RET
+
+; --- données ---
+HELP_STR:  .string "help"
+EXIT_STR:  .string "exit"
+HELP_MSG:  .string "Commandes: help\n"

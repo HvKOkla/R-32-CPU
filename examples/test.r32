@@ -1,0 +1,14 @@
+; Petit test registres (v2.0)
+.equ DEC, 0xF002
+
+MOV R0, 100     ; ignoré : R0 vaut toujours 0
+MOV R1, 35
+MOV R2, 15
+ADD R0, R1      ; R0 + R1 -> stocké nulle part (R0 durci à 0)
+SUB R0, R2
+STORE R1, DEC   ; attendu : 35
+MOV R4, 42
+MOV R5, 42
+CMP R4, R5      ; Z = 1
+STORE R2, DEC   ; attendu : 15
+HALT

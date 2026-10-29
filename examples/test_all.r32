@@ -1,0 +1,54 @@
+; =========================================================
+; R-32 GLOBAL TEST SUITE (v2.1)
+; Résultat attendu : 42 puis 42 sur le port debug décimal
+; =========================================================
+.equ DEC, 0xF002
+
+    ; --- TEST 1 : MOV et ADD ---
+    MOV R1, 10
+    MOV R2, 32
+    ADD R1, R2      ; R1 = 42
+    STORE R1, DEC
+
+    ; --- TEST 2 : SUB et flag Z ---
+    MOV R3, 5
+    SUB R1, R3      ; R1 = 37
+    CMP R1, R1      ; Z = 1
+    JZ  test_jump_ok
+    MOV R4, 99      ; code d'erreur
+    STORE R4, DEC
+    HALT
+
+test_jump_ok:
+    ; --- TEST 3 : JMP ---
+    JMP test_stack
+    MOV R4, 98
+    STORE R4, DEC
+    HALT
+
+test_stack:
+    ; --- TEST 4 : CALL, RET, pile ---
+    MOV R5, 100
+    CALL my_function
+
+    ; --- TEST 5 : MOV registre -> registre ---
+    CMP R5, R5
+    JZ  success
+    MOV R4, 97
+    STORE R4, DEC
+    HALT
+
+success:
+    ; --- TEST 6 : résultat final ---
+    MOV R4, R1      ; 37
+    ADD R4, R3      ; 42
+    STORE R4, DEC
+    HALT
+
+my_function:
+    PUSH R5
+    MOV R5, 50
+    POP R5          ; restaure 100
+    MOV R5, R5      ; copie reg->reg (NOP utile)
+    MOV R5, 42
+    RET

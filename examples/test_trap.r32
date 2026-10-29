@@ -1,0 +1,14 @@
+; =========================================================
+; TEST TRAP / IRET (v3.0) — interruption logicielle
+; Attendu : 8 sur le port debug décimal
+; =========================================================
+.equ DEC, 0xF002
+
+    MOV R5, 7
+    TRAP HANDLER      ; push PC + flags, saut à HANDLER
+    STORE R5, DEC     ; après retour : R5 = 8
+    HALT
+
+HANDLER:
+    INC R5            ; clobbers évités : le handler sauvegarde ce qu'il touche
+    IRET              ; pop flags, pop PC -> retour

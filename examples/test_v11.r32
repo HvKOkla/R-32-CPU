@@ -1,0 +1,30 @@
+; =========================================================
+; TEST UART MMIO (v2.0)
+; Écho : lit un caractère sur l'UART et le renvoie.
+; =========================================================
+.equ UART_DATA,   0xF000
+.equ UART_STATUS, 0xF001
+
+    CALL GETC       ; R1 = caractère reçu
+    CMPI R1, 0
+    JZ fin          ; rien reçu (EOF)
+
+    STORE R1, 0x50  ; mem[0x50] = caractère
+    LOAD R3, 0x50   ; relecture directe
+    CMPI R3, 0
+    JZ fin
+
+    STORE R3, UART_DATA  ; écho sur l'UART
+fin:
+    HALT
+
+GETC:
+    PUSH R2
+    MOV R2, 1
+poll:
+    LOAD R1, UART_STATUS
+    AND R1, R2      ; bit0 = caractère disponible ?
+    JZ poll
+    LOAD R1, UART_DATA
+    POP R2
+    RET
